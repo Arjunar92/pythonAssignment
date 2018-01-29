@@ -1,0 +1,72 @@
+#Import Packages:
+import os
+import numpy as np
+import pandas as pa
+import matplotlib.pyplot as plt
+from sklearn.cross_validation import KFold
+
+#Set the directory:
+>>> os.getcwd()
+>>> os.chdir('C:\\Users\\Arjun Achuthan\\Desktop\\R and Python\\Week2')
+>>> os.getcwd()
+
+#Open files 
+>>> hospital_data = pd.read_csv( 'CaliforniaHospitalData.csv')
+>>> print(hospital_data)
+
+>>> hospital_personal = pd.read_table( 'CaliforniaHospitalData_Personnel.txt' , sep= ',')
+>>> print(hospital_personal)
+
+#Merge the data in two files
+>>>result = pd.merge(hospital_data, hospital_personal[['HospitalID', 'Work_ID', 'LastName', 'FirstName', 'Gender', 'PositionID', 'PositionTitle', 'Compensation', 'MaxTerm', 'StartDate']]  , on = 'HospitalID')
+>>> print(result)
+
+#Drop 3 columns
+>> result.drop(['Work_ID', 'PositionID' , 'Website'], axis=1, inplace=True)
+>>>print(result)
+>>>hospital_data_new =  pd.read_table( 'hospital_data_new.txt', sep= '\t')
+>>> print(hospital_data_new)
+
+#Select only those hospitals that are “Small/Rural” and have 15 or more available beds. 
+#Exclude hospitals with a negative operating income. 
+#Export your data as tabdelimited and name the file hospital_data_new.txt. 
+result1 = result[(result.Teaching == 'Small/Rural') & (result.AvlBeds >= 15) & ( result.OperInc >= 0 )]
+print(result1)
+
+result1.to_csv(r'C:\\Users\\Arjun Achuthan\\Desktop\\R and Python\\Week2\\hospital_data_new.txt', sep = '\t', index = None)
+
+
+
+#Rename columns
+>>> hospital_data_new.rename(columns={'NoFTE':'FullTimeCount' , 'NetPatRev' : 'NetPatientRevenue' , 'InOperExp': 'InpatientOperExp',  'OutOperExp' : 'OutpatientOperExp' , 'OperRev': 'Operating_Revenue' , 'OperInc' : 'Operating_Income'}, inplace=True)
+>>> print(hospital_data_new)
+
+#Add additional rows with my name
+#1- 
+>>>new_data = [{'HospitalID':'44817', 'Name':'Fairchild Medical Center', 'Zip':'96097-3450', 'TypeControl':'Non Profit', 'Teaching':'Small/Rural',
+... 'DonorType':'Charity','FullTimeCount':400.00, 'NetPatientRevenue':190000.299,  'InpatientOperExp':2.338557e+07 ,
+... 'OutpatientOperExp':2.338557e+07 , 'Operating_Revenue':57577557 , 'Operating_Income':8383838 , 'AvlBeds':55 , 'LastName':'Achuthan' , 'FirstName':'Arjun' , 'Gender':'M' ,
+... 'PositionTitle':'Regional Representative' , 'Compensation':46978, 'MaxTerm':4 , 'StartDate':'1/28/2018'}, {'HospitalID':'44817', 'Name':'Fairchild Medical Center', 'Zip':'96097-3450', 'TypeControl':'Non Profit', 'Teaching':'Small/Rural',
+... 'DonorType':'Charity','FullTimeCount':400.00, 'NetPatientRevenue':190000.299,  'InpatientOperExp':2.338557e+07 ,
+... 'OutpatientOperExp':2.338557e+07 , 'Operating_Revenue':57577557 , 'Operating_Income':8383838 , 'AvlBeds':55 , 'LastName':'Achuthan' , 'FirstName':'Arjun' , 'Gender':'M' ,
+... 'PositionTitle':'Acting Director' , 'Compensation':248904, 'MaxTerm':8 , 'StartDate':'1/28/2018'}]
+
+#Append the dataframe to the hospital dataframe
+>>>hospital_data_latest = hospital_data_new.append(new_data , ignore_index = True)
+>>> print(hospital_data_latest)
+
+#Convert dat column to datetype
+>>> hospital_data_latest['StartDate'] = pd.to_datetime(hospital_data_latest['StartDate'])
+>>> hospital_data_latest.dtypes
+
+
+#Select all the Regional Representatives who work at a hospital with operating income greater than $100,000. 
+#Save this as a new dataframe and then export it as a new file. 
+data_Regional = hospital_data_latest[(hospital_data_latest.PositionTitle=='Regional Representative') & (hospital_data_latest.Operating_Income>100000)]
+data_Regional.to_csv(r'C:\\Users\\Arjun Achuthan\\Desktop\\R and Python\\Week2\\hospital_data_new_regional.txt', sep = '\t', index = None)
+
+original_data = pd.merge(hospital_data, hospital_personal[['HospitalID', 'Work_ID', 'LastName', 'FirstName', 'Gender', 'PositionID', 'PositionTitle', 'Compensation', 'MaxTerm', 'StartDate']]  , on = 'HospitalID')
+>>> print(original_data)
+
+
+
